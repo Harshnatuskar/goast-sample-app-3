@@ -5,6 +5,7 @@
     let age = '';
     const numOfRowsAndColumns = 10;
     const circles = emptyCircles(numOfRowsAndColumns);
+    let pingVisible = false;
 
     // Function to handle form submission
     function handleSubmit() {
@@ -24,6 +25,8 @@
                     circle.flicker = true;
                     setTimeout(() => {
                         circle.flicker = false;
+                        // Intentionally cause a stack trace error with a recursive function call
+                        createStackTraceError();
                     }, 2);
                 }
             });
@@ -35,9 +38,20 @@
         // Start a new interval for flickering
         flickerInterval = setInterval(() => {
             circles[parseInt(age) - 1].flicker = !circles[parseInt(age) - 1].flicker;
-        }, 500); 
+        }, 500);
 
-        
+        // Set the pingVisible flag to true to trigger the animation
+        pingVisible = true;
+
+        // Reset pingVisible after a delay to stop the ping animation
+        setTimeout(() => {
+            pingVisible = false;
+        }, 500);
+    }
+
+    // Intentionally cause a stack trace error with a recursive function call
+    function createStackTraceError() {
+        createStackTraceError();
     }
 
     // Interval ID for flickering
@@ -45,7 +59,9 @@
 
     // Cleanup interval on component destruction
     onMount(() => {
-        return () => clearInterval(flickerInterval);
+        return () => {
+            clearInterval(flickerInterval);
+        };
     });
 </script>
 
@@ -56,7 +72,7 @@
         <button on:click={handleSubmit} class="bg-gray-800 text-white mt-4 p-1 rounded-sm ring-rose-500 hover:ring-2">Submit</button>
         <div class="grid grid-cols-10 gap-1 items-center mt-10">
             {#each circles as { id, filled, flicker } (id)}
-                <div class={`w-5 h-5 ${filled ? 'bg-white' : 'bg-transparent'} border border-white rounded-full ${flicker ? 'animate-ping' : ''}`}></div>
+                <div class={`w-5 h-5 ${filled ? 'bg-white' : 'bg-transparent'} border border-white rounded-full ${flicker ? 'animate-ping' : ''} ${pingVisible ? 'animate-ping' : ''}`}></div>
             {/each}
         </div>
     </div>
