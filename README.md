@@ -27,7 +27,7 @@ Here is the fullstack trace:
 
 Goast can fix any stacktrace if it has access to the corresponding code. This means it can fix frontend or backend errors.
 
-This example is a frontend error where a React component is referencing some state that is unexpectedly null.
+This example is a frontend error in a svelte component.
 
 ## Run this sample
 
